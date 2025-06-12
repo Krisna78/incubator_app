@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "1012257449509",
+    "firebase_url": "https://inkubator-68586-default-rtdb.firebaseio.com",
+    "project_id": "inkubator-68586",
+    "storage_bucket": "inkubator-68586.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1012257449509:android:1e11e33ba1ed9409b3c1cc",
+        "android_client_info": {
+          "package_name": "inkubator.com"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCp4C6a425Goxdp4KyxvEb-ijc_-WlpvZw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
