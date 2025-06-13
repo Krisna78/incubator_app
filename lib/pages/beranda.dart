@@ -22,7 +22,6 @@ class _BerandaState extends State<Beranda> {
     keluarSpots.clear();
     tanggalLabels.clear();
 
-    // Ambil maksimal 7 data terakhir
     final recentData = data.length <= 7 ? data : data.sublist(data.length - 7);
 
     for (int i = 0; i < recentData.length; i++) {
@@ -297,6 +296,110 @@ class _BerandaState extends State<Beranda> {
                       ),
                     ),
                   ),
+
+                // ==== Grafik Suhu & Kelembapan ====
+                const SizedBox(height: 20),
+                const Text(
+                  "Grafik Suhu & Kelembapan",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
+                ),
+                const SizedBox(height: 20),
+                Obx(() {
+                  if (incubatorController.suhuSpots.isEmpty ||
+                      incubatorController.kelembapanSpots.isEmpty) {
+                    return Center(
+                      heightFactor: 3,
+                      child: Text("Belum ada data suhu & kelembapan.",
+                          style: TextStyle(
+                              fontSize: 16, color: Color(0xFF737373))),
+                    );
+                  }
+
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      child: AspectRatio(
+                        aspectRatio: 1.7,
+                        child: LineChart(
+                          LineChartData(
+                            gridData:
+                                FlGridData(show: true, drawVerticalLine: false),
+                            titlesData: FlTitlesData(
+                              show: true,
+                              topTitles: AxisTitles(
+                                  sideTitles: SideTitles(showTitles: false)),
+                              rightTitles: AxisTitles(
+                                  sideTitles: SideTitles(showTitles: false)),
+                              bottomTitles: AxisTitles(
+                                sideTitles: SideTitles(
+                                  showTitles: true,
+                                  reservedSize: 28,
+                                  interval: 1,
+                                  getTitlesWidget: (value, _) {
+                                    int index = value.toInt();
+                                    if (index >= 0 &&
+                                        index <
+                                            incubatorController
+                                                .waktuLabels.length) {
+                                      return Text(
+                                        incubatorController.waktuLabels[index],
+                                        style: const TextStyle(fontSize: 10),
+                                      );
+                                    }
+                                    return const SizedBox.shrink();
+                                  },
+                                ),
+                              ),
+                              leftTitles: AxisTitles(
+                                sideTitles: SideTitles(
+                                  showTitles: true,
+                                  reservedSize: 42,
+                                  interval: 20,
+                                  getTitlesWidget: (value, _) =>
+                                      Text(value.toInt().toString()),
+                                ),
+                              ),
+                            ),
+                            borderData: FlBorderData(
+                              show: true,
+                              border: Border.all(color: Colors.black, width: 1),
+                            ),
+                            minX: 0,
+                            maxX: (incubatorController.waktuLabels.length - 1)
+                                .toDouble(),
+                            minY: 0,
+                            maxY: 100,
+                            lineBarsData: [
+                              LineChartBarData(
+                                spots: incubatorController.suhuSpots.length > 10
+                                      ? incubatorController.suhuSpots.sublist(incubatorController.suhuSpots.length - 10)
+                                      : incubatorController.suhuSpots,
+                                isCurved: true,
+                                color: Colors.orange,
+                                barWidth: 4,
+                                isStrokeCapRound: true,
+                                dotData: FlDotData(show: false),
+                                belowBarData: BarAreaData(show: false),
+                              ),
+                              LineChartBarData(
+                                spots: incubatorController.kelembapanSpots.length > 10
+                                      ? incubatorController.kelembapanSpots.sublist(incubatorController.kelembapanSpots.length - 10)
+                                      : incubatorController.kelembapanSpots,
+                                isCurved: true,
+                                color: Colors.blue,
+                                barWidth: 4,
+                                isStrokeCapRound: true,
+                                dotData: FlDotData(show: false),
+                                belowBarData: BarAreaData(show: false),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }),
               ],
             ),
           ),
