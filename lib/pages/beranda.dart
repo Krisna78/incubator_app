@@ -443,17 +443,17 @@ class InfoCard extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-                fontSize: 24, fontWeight: FontWeight.w600, color: Colors.white),
+                fontSize: 21, fontWeight: FontWeight.w600, color: Colors.white),
           ),
           SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 54, color: Colors.white),
+              Icon(icon, size: 48, color: Colors.white),
               Text(
                 value,
                 style: TextStyle(
-                    fontSize: 32,
+                    fontSize: 28,
                     fontWeight: FontWeight.w500,
                     color: Colors.white),
               ),
