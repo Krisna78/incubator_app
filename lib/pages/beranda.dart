@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:get/get.dart';
@@ -16,6 +17,7 @@ class _BerandaState extends State<Beranda> {
   List<FlSpot> masukSpots = [];
   List<FlSpot> keluarSpots = [];
   List<String> tanggalLabels = [];
+  ValueNotifier<bool> motorStatusSwitch = ValueNotifier(false);
 
   void prosesData(List<Map<String, dynamic>> data) {
     masukSpots.clear();
@@ -68,6 +70,8 @@ class _BerandaState extends State<Beranda> {
     incubatorController.loadAllIncubators().then((_) {
       incubatorController.cekTelurKeluarHariIni();
     });
+    incubatorController.fetchMotorStatus();
+    incubatorController.fetchPompaStatus();
   }
 
   @override
@@ -202,6 +206,42 @@ class _BerandaState extends State<Beranda> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 20),
+                Obx(() => Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Motor Status",
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w500),
+                        ),
+                        CupertinoSwitch(
+                          value: incubatorController.motorStatus.value,
+                          onChanged: (newValue) {
+                            incubatorController.updateMotorStatus(newValue);
+                          },
+                          activeColor: Color(0xFF00A1FF),
+                        ),
+                      ],
+                    )),
+                    const SizedBox(height: 10),
+                    Obx(() => Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Pompa Status",
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w500),
+                        ),
+                        CupertinoSwitch(
+                          value: incubatorController.pumpStatus.value,
+                          onChanged: (newValue) {
+                            incubatorController.updatePompaStatus(newValue);
+                          },
+                          activeColor: Color(0xFF00A1FF),
+                        ),
+                      ],
+                    )),
                 const SizedBox(height: 20),
                 const Text(
                   "History Telur Incubator",
@@ -373,8 +413,10 @@ class _BerandaState extends State<Beranda> {
                             lineBarsData: [
                               LineChartBarData(
                                 spots: incubatorController.suhuSpots.length > 10
-                                      ? incubatorController.suhuSpots.sublist(incubatorController.suhuSpots.length - 10)
-                                      : incubatorController.suhuSpots,
+                                    ? incubatorController.suhuSpots.sublist(
+                                        incubatorController.suhuSpots.length -
+                                            10)
+                                    : incubatorController.suhuSpots,
                                 isCurved: true,
                                 color: Colors.orange,
                                 barWidth: 4,
@@ -383,9 +425,14 @@ class _BerandaState extends State<Beranda> {
                                 belowBarData: BarAreaData(show: false),
                               ),
                               LineChartBarData(
-                                spots: incubatorController.kelembapanSpots.length > 10
-                                      ? incubatorController.kelembapanSpots.sublist(incubatorController.kelembapanSpots.length - 10)
-                                      : incubatorController.kelembapanSpots,
+                                spots:
+                                    incubatorController.kelembapanSpots.length >
+                                            10
+                                        ? incubatorController.kelembapanSpots
+                                            .sublist(incubatorController
+                                                    .kelembapanSpots.length -
+                                                10)
+                                        : incubatorController.kelembapanSpots,
                                 isCurved: true,
                                 color: Colors.blue,
                                 barWidth: 4,

@@ -18,6 +18,8 @@ class IncubatorController extends GetxController {
   // Sensor
   var suhu = 0.0.obs;
   var kelembapan = 0.0.obs;
+  RxBool motorStatus = false.obs;
+  RxBool pumpStatus = false.obs;
 
   // Untuk chart suhu dan kelembapan per 2 menit
   RxList<FlSpot> suhuSpots = <FlSpot>[].obs;
@@ -160,5 +162,77 @@ class IncubatorController extends GetxController {
   Future<void> loadChartData() async {
     final data = await DatabaseHelper.instance.getGroupedTelurData();
     chartData.assignAll(data);
+  }
+
+  Future<void> fetchMotorStatus() async {
+    try {
+      final url = Uri.parse('${databaseUrl}sensor/motorStatus.json?auth=$secret');
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final status = json.decode(response.body);
+        motorStatus.value = (status == 'ON');
+      } else {
+        print('Gagal mengambil motorStatus');
+      }
+    } catch (e) {
+      print('Error mengambil motorStatus: $e');
+    }
+  }
+
+  Future<void> updateMotorStatus(bool value) async {
+    final status = value ? 'ON' : 'OFF';
+    final url = Uri.parse('${databaseUrl}sensor/motorStatus.json?auth=$secret');
+
+    try {
+      final response = await http.put(
+        url,
+        body: json.encode(status),
+      );
+
+      if (response.statusCode == 200) {
+        motorStatus.value = value;
+      } else {
+        print('Gagal mengubah motorStatus');
+      }
+    } catch (e) {
+      print('Error mengubah motorStatus: $e');
+    }
+  }
+
+  Future<void> fetchPompaStatus() async {
+    try {
+      final url = Uri.parse('${databaseUrl}sensor/pumpStatus.json?auth=$secret');
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final status = json.decode(response.body);
+        pumpStatus.value = (status == 'ON');
+      } else {
+        print('Gagal mengambil pumpStatus');
+      }
+    } catch (e) {
+      print('Error mengambil pumpStatus: $e');
+    }
+  }
+
+  Future<void> updatePompaStatus(bool value) async {
+    final status = value ? 'ON' : 'OFF';
+    final url = Uri.parse('${databaseUrl}sensor/pumpStatus.json?auth=$secret');
+
+    try {
+      final response = await http.put(
+        url,
+        body: json.encode(status),
+      );
+
+      if (response.statusCode == 200) {
+        pumpStatus.value = value;
+      } else {
+        print('Gagal mengubah pumpStatus');
+      }
+    } catch (e) {
+      print('Error mengubah pumpStatus: $e');
+    }
   }
 }
