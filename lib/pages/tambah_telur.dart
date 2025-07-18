@@ -13,6 +13,7 @@ class TambahTelur extends StatefulWidget {
   final masukDateControl = TextEditingController();
   final keluarDateControl = TextEditingController();
   final jumlahTelurControl = TextEditingController();
+  final jumlahMenetasControl = TextEditingController();
 
   @override
   State<TambahTelur> createState() => _TambahTelurState();
@@ -21,6 +22,7 @@ class TambahTelur extends StatefulWidget {
 class _TambahTelurState extends State<TambahTelur> {
   final IncubatorController incubatorController =
       Get.put(IncubatorController());
+  bool showJumlahMenetas = false;
   @override
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
@@ -88,14 +90,19 @@ class _TambahTelurState extends State<TambahTelur> {
                   isFilled: true,
                   isDateField: true,
                   prefixIcon: IconButton(
-                    onPressed: () =>
-                        _selectDate(context, widget.keluarDateControl),
+                    onPressed: () async {
+                      _selectDate(context, widget.keluarDateControl);
+                      setState(() {
+                        showJumlahMenetas = true;
+                      });
+                    },
                     icon: Icon(Icons.calendar_month),
                   ),
                   suffixIcon: IconButton(
                     onPressed: () {
                       setState(() {
                         widget.keluarDateControl.clear();
+                        showJumlahMenetas = false;
                       });
                     },
                     icon: Icon(Icons.clear),
@@ -106,6 +113,14 @@ class _TambahTelurState extends State<TambahTelur> {
                   controller: widget.jumlahTelurControl,
                   hintText: "Jumlah Telur",
                 ),
+                if (showJumlahMenetas) ...[
+                  const SizedBox(height: 12),
+                  TextFieldPage(
+                    controller: widget.jumlahMenetasControl,
+                    hintText: "Jumlah Menetas",
+                    textInputType: TextInputType.number,
+                  ),
+                ],
                 const SizedBox(height: 12),
                 MyButton(
                     onTap: () async {
@@ -129,6 +144,10 @@ class _TambahTelurState extends State<TambahTelur> {
                           tanggal_keluar: dbFormattedDateKeluar,
                           jumlah_telur:
                               int.parse(widget.jumlahTelurControl.text),
+                          jumlah_menetas: showJumlahMenetas &&
+                                  widget.jumlahMenetasControl.text.isNotEmpty
+                              ? int.parse(widget.jumlahMenetasControl.text)
+                              : null,
                         );
                         await incubatorController.addIncubator(incubator);
                         Navigator.pop(context);

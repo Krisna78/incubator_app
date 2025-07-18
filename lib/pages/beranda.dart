@@ -144,7 +144,7 @@ class _BerandaState extends State<Beranda> {
                                             title:
                                                 Text("Kode: ${item['kode']}"),
                                             subtitle: Text(
-                                                "Jumlah: ${item['jumlah_telur']} telur"),
+                                                "Jumlah Telur: ${item['jumlah_telur']} telur\nJumlah Menetas: ${item['jumlah_menetas']} telur\nJumlah Belum Menetas: ${item['jumlah_belum_menetas']}"),
                                           );
                                         },
                                       ),
@@ -224,8 +224,8 @@ class _BerandaState extends State<Beranda> {
                         ),
                       ],
                     )),
-                    const SizedBox(height: 10),
-                    Obx(() => Row(
+                const SizedBox(height: 10),
+                Obx(() => Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(

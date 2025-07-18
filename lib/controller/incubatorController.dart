@@ -75,23 +75,19 @@ class IncubatorController extends GetxController {
     final waktu =
         "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
 
-    // Tambah data mentah terlebih dahulu
     final newSuhu = suhu.value;
     final newKelembapan = kelembapan.value;
 
-    // Tambah data baru
-    suhuSpots.add(FlSpot(0, newSuhu)); // x diatur ulang nanti
+    suhuSpots.add(FlSpot(0, newSuhu));
     kelembapanSpots.add(FlSpot(0, newKelembapan));
     waktuLabels.add(waktu);
 
-    // Hapus jika lebih dari 10
     if (suhuSpots.length > 10) {
       suhuSpots.removeAt(0);
       kelembapanSpots.removeAt(0);
       waktuLabels.removeAt(0);
     }
 
-    // Perbarui kembali X agar mulai dari 0
     for (int i = 0; i < suhuSpots.length; i++) {
       suhuSpots[i] = FlSpot(i.toDouble(), suhuSpots[i].y);
       kelembapanSpots[i] = FlSpot(i.toDouble(), kelembapanSpots[i].y);
@@ -101,27 +97,31 @@ class IncubatorController extends GetxController {
   void cekTelurKeluarHariIni() {
     final DateTime now = DateTime.now();
 
-    telurKeluarHariIni.value = incubators
-        .where((data) {
-          try {
-            final keluarStr = data.tanggal_keluar;
-            if (keluarStr == null || keluarStr.isEmpty) return false;
+    telurKeluarHariIni.value = incubators.where((data) {
+      try {
+        final keluarStr = data.tanggal_keluar;
+        if (keluarStr == null || keluarStr.isEmpty) return false;
 
-            final keluarDate = DateTime.parse(keluarStr);
-            return keluarDate.year == now.year &&
-                keluarDate.month == now.month &&
-                keluarDate.day == now.day &&
-                (data.jumlah_telur! > 0);
-          } catch (_) {
-            return false;
-          }
-        })
-        .map((e) => {
-              "kode": e.kode,
-              "tanggal_keluar": e.tanggal_keluar,
-              "jumlah_telur": e.jumlah_telur
-            })
-        .toList();
+        final keluarDate = DateTime.parse(keluarStr);
+        return keluarDate.year == now.year &&
+            keluarDate.month == now.month &&
+            keluarDate.day == now.day;
+      } catch (_) {
+        return false;
+      }
+    }).map((e) {
+      final jumlahTelur = e.jumlah_telur ?? 0;
+      final jumlahMenetas = e.jumlah_menetas ?? 0;
+      final jumlahBelumMenetas = jumlahTelur - jumlahMenetas;
+
+      return {
+        "kode": e.kode,
+        "tanggal_keluar": e.tanggal_keluar,
+        "jumlah_telur": e.jumlah_telur,
+        "jumlah_menetas": jumlahMenetas,
+        "jumlah_belum_menetas": jumlahBelumMenetas,
+      };
+    }).toList();
   }
 
   Future<void> loadSensorData() async {
@@ -166,7 +166,8 @@ class IncubatorController extends GetxController {
 
   Future<void> fetchMotorStatus() async {
     try {
-      final url = Uri.parse('${databaseUrl}sensor/motorStatus.json?auth=$secret');
+      final url =
+          Uri.parse('${databaseUrl}sensor/motorStatus.json?auth=$secret');
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
@@ -202,7 +203,8 @@ class IncubatorController extends GetxController {
 
   Future<void> fetchPompaStatus() async {
     try {
-      final url = Uri.parse('${databaseUrl}sensor/pumpStatus.json?auth=$secret');
+      final url =
+          Uri.parse('${databaseUrl}sensor/pumpStatus.json?auth=$secret');
       final response = await http.get(url);
 
       if (response.statusCode == 200) {

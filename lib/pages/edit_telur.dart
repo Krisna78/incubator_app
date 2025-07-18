@@ -22,6 +22,7 @@ class _EditTelurState extends State<EditTelur> {
   late TextEditingController masukDateControl;
   late TextEditingController keluarDateControl;
   late TextEditingController jumlahTelurControl;
+  late TextEditingController jumlahMenetasControl;
 
   Future<void> _selectDate(
       BuildContext context, TextEditingController controller) async {
@@ -37,6 +38,8 @@ class _EditTelurState extends State<EditTelur> {
       });
     }
   }
+
+  bool showJumlahMenetas = false;
 
   @override
   void initState() {
@@ -54,6 +57,8 @@ class _EditTelurState extends State<EditTelur> {
             : '');
     jumlahTelurControl =
         TextEditingController(text: widget.incubator.jumlah_telur.toString());
+    jumlahMenetasControl= TextEditingController(text: widget.incubator.jumlah_menetas?.toString() ?? '');
+    showJumlahMenetas = widget.incubator.jumlah_menetas != null;
   }
 
   @override
@@ -104,13 +109,18 @@ class _EditTelurState extends State<EditTelur> {
                   isFilled: true,
                   isDateField: true,
                   prefixIcon: IconButton(
-                    onPressed: () => _selectDate(context, keluarDateControl),
+                    onPressed: () {
+                      _selectDate(context, keluarDateControl);
+                      showJumlahMenetas = true;
+                    },
                     icon: Icon(Icons.calendar_month),
                   ),
                   suffixIcon: IconButton(
                     onPressed: () {
                       setState(() {
                         keluarDateControl.clear();
+                        showJumlahMenetas = false;
+                        jumlahMenetasControl.clear();
                       });
                     },
                     icon: Icon(Icons.clear),
@@ -119,6 +129,14 @@ class _EditTelurState extends State<EditTelur> {
                 const SizedBox(height: 12),
                 TextFieldPage(
                     controller: jumlahTelurControl, hintText: "Jumlah Telur"),
+                if (showJumlahMenetas) ...[
+                  const SizedBox(height: 12),
+                  TextFieldPage(
+                    controller: jumlahMenetasControl,
+                    hintText: "Jumlah Telur Menetas",
+                    textInputType: TextInputType.number,
+                  ),
+                ],
                 const SizedBox(height: 12),
                 MyButton(
                   nameBtn: "Update",
@@ -136,6 +154,10 @@ class _EditTelurState extends State<EditTelur> {
                                     .parse(keluarDateControl.text))
                             : null,
                         jumlah_telur: int.parse(jumlahTelurControl.text),
+                        jumlah_menetas: showJumlahMenetas &&
+                                jumlahMenetasControl.text.isNotEmpty
+                            ? int.parse(jumlahMenetasControl.text)
+                            : null,
                       );
 
                       await incubatorController.updateIncubator(updated);

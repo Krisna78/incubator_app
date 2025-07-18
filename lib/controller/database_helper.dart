@@ -27,7 +27,8 @@ class DatabaseHelper {
       kode TEXT NOT NULL,
       tanggal_masuk TEXT NULL,
       tanggal_keluar TEXT NULL,
-      jumlah_telur INTEGER NOT NULL
+      jumlah_telur INTEGER NOT NULL,
+      jumlah_menetas INTEGER NULL
     );
     ''';
     await db.execute(sql);

@@ -6,12 +6,14 @@ class Incubator {
   final String? tanggal_masuk;
   final String? tanggal_keluar;
   final int? jumlah_telur;
+  final int? jumlah_menetas;
   Incubator({
     this.id,
     this.kode,
     this.tanggal_masuk,
     this.tanggal_keluar,
     this.jumlah_telur,
+    this.jumlah_menetas,
   });
 
   Map<String, dynamic> toMap() {
@@ -21,6 +23,7 @@ class Incubator {
       'tanggal_masuk': tanggal_masuk,
       'tanggal_keluar': tanggal_keluar,
       'jumlah_telur': jumlah_telur,
+      'jumlah_menetas': jumlah_menetas,
     };
   }
 
@@ -31,6 +34,7 @@ class Incubator {
       tanggal_masuk: map['tanggal_masuk'] != null ? map['tanggal_masuk'] as String : null,
       tanggal_keluar: map['tanggal_keluar'] != null ? map['tanggal_keluar'] as String : null,
       jumlah_telur: map['jumlah_telur'] != null ? map['jumlah_telur'] as int : null,
+      jumlah_menetas: map['jumlah_menetas'] != null ? map['jumlah_menetas'] as int : null,
     );
   }
 
